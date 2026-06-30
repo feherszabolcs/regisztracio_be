@@ -29,7 +29,7 @@ namespace regisztracio_be.Controllers
 
         // GET api/<VehicleController>/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get([FromRoute]int id)
+        public async Task<IActionResult> GetByID([FromRoute] int id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null)
@@ -68,8 +68,18 @@ namespace regisztracio_be.Controllers
 
         // DELETE api/<VehicleController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute]int id)
         {
+            var v = await _context.Vehicles.FindAsync(id);
+            if (v == null)
+            {
+                return NotFound();
+            }
+
+            _context.Vehicles.Remove(v);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
