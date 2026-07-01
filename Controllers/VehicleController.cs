@@ -61,9 +61,27 @@ namespace regisztracio_be.Controllers
         }
 
         // PUT api/<VehicleController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] VehiclePostDTO value)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            vehicle.Name = value.Name;
+            vehicle.Location = value.Location;
+            vehicle.BuildYear = value.BuildYear;
+            vehicle.Owner = value.Owner;
+
+            _context.Vehicles.Update(vehicle);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // DELETE api/<VehicleController>/5
