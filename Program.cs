@@ -46,6 +46,20 @@ namespace regisztracio_be
             }
             app.MapControllers();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<OTDbContext>();
+                    context.Database.Migrate(); // Létrehozza a táblákat az adatbázisban
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Hiba a migráció során: {ex.Message}");
+                }
+            }
+
             app.Run();
         }
     }
