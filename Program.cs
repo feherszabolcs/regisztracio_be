@@ -12,6 +12,15 @@ namespace regisztracio_be
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowNgrok", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
             var connection = String.Empty;
             if (builder.Environment.IsDevelopment())
@@ -28,6 +37,7 @@ namespace regisztracio_be
                 options.UseSqlServer(connection));
 
             var app = builder.Build();
+            app.UseCors("AllowNgrok");
 
             if (app.Environment.IsDevelopment())
             {
